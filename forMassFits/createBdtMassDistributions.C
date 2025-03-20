@@ -10,27 +10,22 @@
 # include <TH1F.h>
 # include <TH1D.h>
 # include <TCanvas.h>
+#include <fstream>
 
 using namespace std;
-Bool_t istest = true;
-int createBdtMassDistributions(TString inputfile="", TString outfile1="")
+Bool_t istest = false;
+int createBdtMassDistributions(TString i_start="", TString i_end="")
 {
 
 
-    if(istest)
-    {
-        inputfile="/scratch/negishi/awesole/dataWithBdt/ROOT/outfile_ttree_2280_2310.root";
-        //inputfile="/home/awesole/forDDbarAnalysis/BDT_training_output/BDT_signal.root";
-        outfile1="test.root";
-        cout << "TEST" << endl;
-    }
+    ifstream file_stream("/home/awesole/forDDbarAnalysis/dataFiles/dataWithBdt.list");
+    string filename;
+    int ifile = 0;
+    int istart = atoi(i_start);
+    int iend = atoi(i_end);
 
-
-
-    TFile* inf = TFile::Open(inputfile);
-    TTree *t = (TTree*)inf->Get("mvaTree");
-    t->SetMakeClass(1);
-    TFile *outf = new TFile(outfile1,"recreate");
+    string output_name = "/scratch/negishi/awesole/BdtHistos/ROOT/outfile_histos_" + to_string(istart) + "_" + to_string(iend) + ".root";
+    TFile *outf = new TFile(output_name.c_str(), "recreate");
 
     int candSize, centrality;
     float pT[10000], mass[10000], y[10000];
@@ -124,119 +119,488 @@ int createBdtMassDistributions(TString inputfile="", TString outfile1="")
     std::vector<TH1D*> histograms_pt_15_20_cent_50_90;
     histograms_pt_15_20_cent_50_90.resize(bdt_values.size());
 
-    for (int j=0; j<bdt_values.size(); j++)
+
+        for (int j = 0; j < bdt_values.size(); j++)
+        {
+            // you need a histo for each pt/cent bin and bdt value
+            histograms_pt_1_2_cent_0_10[j] = new TH1D(Form("pt_1_2_cent_0_10_bdt_%d", j), Form("pt_1_2_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_1_2_cent_10_30[j] = new TH1D(Form("pt_1_2_cent_10_30_bdt_%d", j), Form("pt_1_2_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_1_2_cent_30_50[j] = new TH1D(Form("pt_1_2_cent_30_50_bdt_%d", j), Form("pt_1_2_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_1_2_cent_50_90[j] = new TH1D(Form("pt_1_2_cent_50_90_bdt_%d", j), Form("pt_1_2_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_2_3_cent_0_10[j] = new TH1D(Form("pt_2_3_cent_0_10_bdt_%d", j), Form("pt_2_3_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_2_3_cent_10_30[j] = new TH1D(Form("pt_2_3_cent_10_30_bdt_%d", j), Form("pt_2_3_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_2_3_cent_30_50[j] = new TH1D(Form("pt_2_3_cent_30_50_bdt_%d", j), Form("pt_2_3_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_2_3_cent_50_90[j] = new TH1D(Form("pt_2_3_cent_50_90_bdt_%d", j), Form("pt_2_3_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_3_4_cent_0_10[j] = new TH1D(Form("pt_3_4_cent_0_10_bdt_%d", j), Form("pt_3_4_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_3_4_cent_10_30[j] = new TH1D(Form("pt_3_4_cent_10_30_bdt_%d", j), Form("pt_3_4_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_3_4_cent_30_50[j] = new TH1D(Form("pt_3_4_cent_30_50_bdt_%d", j), Form("pt_3_4_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_3_4_cent_50_90[j] = new TH1D(Form("pt_3_4_cent_50_90_bdt_%d", j), Form("pt_3_4_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_4_5_cent_0_10[j] = new TH1D(Form("pt_4_5_cent_0_10_bdt_%d", j), Form("pt_4_5_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_4_5_cent_10_30[j] = new TH1D(Form("pt_4_5_cent_10_30_bdt_%d", j), Form("pt_4_5_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_4_5_cent_30_50[j] = new TH1D(Form("pt_4_5_cent_30_50_bdt_%d", j), Form("pt_4_5_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_4_5_cent_50_90[j] = new TH1D(Form("pt_4_5_cent_50_90_bdt_%d", j), Form("pt_4_5_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_5_6_cent_0_10[j] = new TH1D(Form("pt_5_6_cent_0_10_bdt_%d", j), Form("pt_5_6_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_5_6_cent_10_30[j] = new TH1D(Form("pt_5_6_cent_10_30_bdt_%d", j), Form("pt_5_6_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_5_6_cent_30_50[j] = new TH1D(Form("pt_5_6_cent_30_50_bdt_%d", j), Form("pt_5_6_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_5_6_cent_50_90[j] = new TH1D(Form("pt_5_6_cent_50_90_bdt_%d", j), Form("pt_5_6_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_6_8_cent_0_10[j] = new TH1D(Form("pt_6_8_cent_0_10_bdt_%d", j), Form("pt_6_8_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_6_8_cent_10_30[j] = new TH1D(Form("pt_6_8_cent_10_30_bdt_%d", j), Form("pt_6_8_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_6_8_cent_30_50[j] = new TH1D(Form("pt_6_8_cent_30_50_bdt_%d", j), Form("pt_6_8_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_6_8_cent_50_90[j] = new TH1D(Form("pt_6_8_cent_50_90_bdt_%d", j), Form("pt_6_8_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_8_10_cent_0_10[j] = new TH1D(Form("pt_8_10_cent_0_10_bdt_%d", j), Form("pt_8_10_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_8_10_cent_10_30[j] = new TH1D(Form("pt_8_10_cent_10_30_bdt_%d", j), Form("pt_8_10_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_8_10_cent_30_50[j] = new TH1D(Form("pt_8_10_cent_30_50_bdt_%d", j), Form("pt_8_10_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_8_10_cent_50_90[j] = new TH1D(Form("pt_8_10_cent_50_90_bdt_%d", j), Form("pt_8_10_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_10_15_cent_0_10[j] = new TH1D(Form("pt_10_15_cent_0_10_bdt_%d", j), Form("pt_10_15_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_10_15_cent_10_30[j] = new TH1D(Form("pt_10_15_cent_10_30_bdt_%d", j), Form("pt_10_15_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_10_15_cent_30_50[j] = new TH1D(Form("pt_10_15_cent_30_50_bdt_%d", j), Form("pt_10_15_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_10_15_cent_50_90[j] = new TH1D(Form("pt_10_15_cent_50_90_bdt_%d", j), Form("pt_10_15_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+
+            histograms_pt_15_20_cent_0_10[j] = new TH1D(Form("pt_15_20_cent_0_10_bdt_%d", j), Form("pt_15_20_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_15_20_cent_10_30[j] = new TH1D(Form("pt_15_20_cent_10_30_bdt_%d", j), Form("pt_15_20_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_15_20_cent_30_50[j] = new TH1D(Form("pt_15_20_cent_30_50_bdt_%d", j), Form("pt_15_20_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+            histograms_pt_15_20_cent_50_90[j] = new TH1D(Form("pt_15_20_cent_50_90_bdt_%d", j), Form("pt_15_20_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        }
+
+    while (true)
     {
-     //you need a histo for each pt/cent bin and bdt value 
-        histograms_pt_1_2_cent_0_10[j] = new TH1D(Form("pt_1_2_cent_0_10_bdt_%d", j), Form("pt_1_2_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_1_2_cent_10_30[j] = new TH1D(Form("pt_1_2_cent_10_30_bdt_%d", j), Form("pt_1_2_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_1_2_cent_30_50[j] = new TH1D(Form("pt_1_2_cent_30_50_bdt_%d", j), Form("pt_1_2_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_1_2_cent_50_90[j] = new TH1D(Form("pt_1_2_cent_50_90_bdt_%d", j), Form("pt_1_2_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        file_stream >> filename;
 
-        /*
-        histograms_pt_2_3_cent_0_10[j] = new TH1D(Form("pt_2_3_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_2_3_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_2_3_cent_10_30[j] = new TH1D(Form("pt_2_3_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_2_3_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_2_3_cent_30_50[j] = new TH1D(Form("pt_2_3_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_2_3_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_2_3_cent_50_90[j] = new TH1D(Form("pt_2_3_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_2_3_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        if (file_stream.eof())
+            break;
 
-        histograms_pt_3_4_cent_0_10[j] = new TH1D(Form("pt_3_4_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_3_4_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_3_4_cent_10_30[j] = new TH1D(Form("pt_3_4_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_3_4_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_3_4_cent_30_50[j] = new TH1D(Form("pt_3_4_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_3_4_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_3_4_cent_50_90[j] = new TH1D(Form("pt_3_4_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_3_4_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        if (ifile < istart)
+        {
+            ifile++;
+            continue;
+        }
 
-        histograms_pt_4_5_cent_0_10[j] = new TH1D(Form("pt_4_5_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_4_5_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_4_5_cent_10_30[j] = new TH1D(Form("pt_4_5_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_4_5_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_4_5_cent_30_50[j] = new TH1D(Form("pt_4_5_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_4_5_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_4_5_cent_50_90[j] = new TH1D(Form("pt_4_5_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_4_5_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        if (ifile >= iend)
+            break;
 
-        histograms_pt_5_6_cent_0_10[j] = new TH1D(Form("pt_5_6_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_5_6_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_5_6_cent_10_30[j] = new TH1D(Form("pt_5_6_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_5_6_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_5_6_cent_30_50[j] = new TH1D(Form("pt_5_6_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_5_6_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_5_6_cent_50_90[j] = new TH1D(Form("pt_5_6_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_5_6_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        TFile *inf = TFile::Open(filename.c_str());
+        cout << "file path = " << filename.c_str() << endl;
+        if (inf->IsZombie() || inf->Get("mvaTree") == nullptr)
+        {
+            cout << "BIG PROBLEM" << endl;
+            ifile++;
+            continue;
+        }
 
-        histograms_pt_6_8_cent_0_10[j] = new TH1D(Form("pt_6_8_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_6_8_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_6_8_cent_10_30[j] = new TH1D(Form("pt_6_8_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_6_8_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_6_8_cent_30_50[j] = new TH1D(Form("pt_6_8_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_6_8_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_6_8_cent_50_90[j] = new TH1D(Form("pt_6_8_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_6_8_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
+        TTree *t = (TTree *)inf->Get("mvaTree");
+        t->SetMakeClass(1);
+        for (int i = 0; i < t->GetEntries(); i++)
+        // for(int i=0;i<1000;i++)
+        {
+            t->SetBranchAddress("candSize", &candSize);
+            t->SetBranchAddress("pT", pT);
+            t->SetBranchAddress("mass", mass);
+            t->SetBranchAddress("centrality", &centrality);
+            t->SetBranchAddress("y", y);
+            t->SetBranchAddress("BDT_weight", BDT_weight);
+            t->GetEntry(i);
+            // cout << "candSize= " << candSize << endl;
+            if (i % 100000 == 0)
+                cout << i << " / " << t->GetEntries() << endl;
 
-        histograms_pt_8_10_cent_0_10[j] = new TH1D(Form("pt_8_10_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_8_10_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_8_10_cent_10_30[j] = new TH1D(Form("pt_8_10_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_8_10_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_8_10_cent_30_50[j] = new TH1D(Form("pt_8_10_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_8_10_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_8_10_cent_50_90[j] = new TH1D(Form("pt_8_10_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_8_10_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-
-        histograms_pt_10_15_cent_0_10[j] = new TH1D(Form("pt_10_15_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_10_15_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_10_15_cent_10_30[j] = new TH1D(Form("pt_10_15_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_10_15_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_10_15_cent_30_50[j] = new TH1D(Form("pt_10_15_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_10_15_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_10_15_cent_50_90[j] = new TH1D(Form("pt_10_15_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_10_15_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-
-        histograms_pt_15_20_cent_0_10[j] = new TH1D(Form("pt_15_20_cent_0_10_bdt_%f", bdt_values[j]), Form("pt_15_20_cent_0_10_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_15_20_cent_10_30[j] = new TH1D(Form("pt_15_20_cent_10_30_bdt_%f", bdt_values[j]), Form("pt_15_20_cent_10_30_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_15_20_cent_30_50[j] = new TH1D(Form("pt_15_20_cent_30_50_bdt_%f", bdt_values[j]), Form("pt_15_20_cent_30_50_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        histograms_pt_15_20_cent_50_90[j] = new TH1D(Form("pt_15_20_cent_50_90_bdt_%f", bdt_values[j]), Form("pt_15_20_cent_50_90_bdt_%f", bdt_values[j]), 52, 1.74, 2.);
-        */
-
-
-    }
-
-    for(int i=0;i<t->GetEntries();i++)
-    //for(int i=0;i<1000;i++)
-    {
-        t->SetBranchAddress("candSize", &candSize); 
-        t->SetBranchAddress("pT", pT);
-        t->SetBranchAddress("mass", mass);
-        t->SetBranchAddress("centrality", &centrality);
-        t->SetBranchAddress("y", y);
-        t->SetBranchAddress("BDT_weight", BDT_weight);
-        t->GetEntry(i);
-        // cout << "candSize= " << candSize << endl;
-        if(i%100000==0) cout <<i<<" / "<<t->GetEntries()<<endl;
-
-        //   for(int j=0; j<candSize; j++)
-        for(int j=0; j<candSize; j++)
-        { 
-            if(y[j]>-1 && y[j]<1)
+            //   for(int j=0; j<candSize; j++)
+            for (int j = 0; j < candSize; j++)
             {
-                  //cout << "y=" << y[j] << endl;
-                if (centrality>=0 && centrality<20 )
+                if (y[j] > -1 && y[j] < 1)
                 {
-                    if (pT[j]>=1 && pT[j]<2){
-                        if(BDT_weight[j]>-0.6) histograms_pt_1_2_cent_0_10[0]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.55) histograms_pt_1_2_cent_0_10[1]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.5) histograms_pt_1_2_cent_0_10[2]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.45) histograms_pt_1_2_cent_0_10[3]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.4) histograms_pt_1_2_cent_0_10[4]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.35) histograms_pt_1_2_cent_0_10[5]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.3) histograms_pt_1_2_cent_0_10[6]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.25) histograms_pt_1_2_cent_0_10[7]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.2) histograms_pt_1_2_cent_0_10[8]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.15) histograms_pt_1_2_cent_0_10[9]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.1) histograms_pt_1_2_cent_0_10[10]->Fill(mass[j]);
-                        if(BDT_weight[j]>-0.05) histograms_pt_1_2_cent_0_10[11]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.0) histograms_pt_1_2_cent_0_10[12]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.05) histograms_pt_1_2_cent_0_10[13]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.1) histograms_pt_1_2_cent_0_10[14]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.15) histograms_pt_1_2_cent_0_10[15]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.2) histograms_pt_1_2_cent_0_10[16]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.25) histograms_pt_1_2_cent_0_10[17]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.3) histograms_pt_1_2_cent_0_10[18]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.35) histograms_pt_1_2_cent_0_10[19]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.4) histograms_pt_1_2_cent_0_10[20]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.45) histograms_pt_1_2_cent_0_10[21]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.5) histograms_pt_1_2_cent_0_10[22]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.55) histograms_pt_1_2_cent_0_10[23]->Fill(mass[j]);
-                        if(BDT_weight[j]>0.6) histograms_pt_1_2_cent_0_10[24]->Fill(mass[j]);
-                   }//if pT
-                }//if centrality
-            }//if y
-        }//for candSize
+                    // cout << "y=" << y[j] << endl;
+                    if (centrality >= 0 && centrality < 2 * 10)
+                    {
+                        if (pT[j] >= 1 && pT[j] < 2)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_1_2_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 2 && pT[j] < 3)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_2_3_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 3 && pT[j] < 4)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_3_4_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 4 && pT[j] < 5)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_4_5_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 5 && pT[j] < 6)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_5_6_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 6 && pT[j] < 8)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_6_8_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 8 && pT[j] < 10)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_8_10_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 10 && pT[j] < 15)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_10_15_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 15 && pT[j] < 20)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_15_20_cent_0_10[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                    } // if centrality
+                    if (centrality >= 2 * 10 && centrality < 2 * 30)
+                    {
+                        if (pT[j] >= 1 && pT[j] < 2)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_1_2_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 2 && pT[j] < 3)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_2_3_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 3 && pT[j] < 4)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_3_4_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 4 && pT[j] < 5)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_4_5_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 5 && pT[j] < 6)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_5_6_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 6 && pT[j] < 8)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_6_8_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 8 && pT[j] < 10)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_8_10_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 10 && pT[j] < 15)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_10_15_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 15 && pT[j] < 20)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_15_20_cent_10_30[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                    } // if centrality
+                    if (centrality >= 2 * 30 && centrality < 2 * 50)
+                    {
+                        if (pT[j] >= 1 && pT[j] < 2)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_1_2_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 2 && pT[j] < 3)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_2_3_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 3 && pT[j] < 4)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_3_4_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 4 && pT[j] < 5)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_4_5_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 5 && pT[j] < 6)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_5_6_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 6 && pT[j] < 8)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_6_8_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 8 && pT[j] < 10)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_8_10_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 10 && pT[j] < 15)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_10_15_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 15 && pT[j] < 20)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_15_20_cent_30_50[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                    } // if centrality
+                    if (centrality >= 2 * 50 && centrality < 2 * 90)
+                    {
+                        if (pT[j] >= 1 && pT[j] < 2)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_1_2_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 2 && pT[j] < 3)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_2_3_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 3 && pT[j] < 4)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_3_4_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 4 && pT[j] < 5)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_4_5_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 5 && pT[j] < 6)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_5_6_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 6 && pT[j] < 8)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_6_8_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 8 && pT[j] < 10)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_8_10_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 10 && pT[j] < 15)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_10_15_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                        if (pT[j] >= 15 && pT[j] < 20)
+                        {
+                            for (int r = 0; r < bdt_values.size(); r++)
+                            {
+                                if (BDT_weight[j] > bdt_values[r])
+                                {
+                                    histograms_pt_15_20_cent_50_90[r]->Fill(mass[j]);
+                                }
+                            }
+                        } // if pT
+                    } // if centrality
+                } // if y
+            } // for candSize
 
-    }//for entries 
-    outf->cd();
-    outf->Write();
-    outf->Close();
-    cout << "DONE --" << endl;
-    return 0;
-}//function 
-
+        } // for entries
+        ifile++;
+        inf->Close();
+    }//while 
+        outf->cd();
+        outf->Write();
+        outf->Close();
+        cout << "DONE --" << endl;
+        return 0;
+    } // function
 
 int main(int argc, char *argv[])
 {
@@ -247,7 +611,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        std::cout << "Usage: mergeForest <input_collection> <output_file>" << std::endl;
+        std::cout << "Usage: <istart> <iend>" << std::endl;
         return 1;
     }
     return 0;
