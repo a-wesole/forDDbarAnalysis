@@ -16,7 +16,7 @@ const int number_of_slices = 30;
 
 const float nbinsX = 100;
 const float nbinsY = 30;
-const float fit_range_low = 1.75, fit_range_high = 1.86484 + 0.125;
+const float fit_range_low = 1.86484 - 0.125, fit_range_high = 1.86484 + 0.125;
 // const float fit_range_low = 1.74, fit_range_high = 1.99;
 const float in_val = -0.5 * TMath::Pi(), sc_val = (2 * TMath::Pi() / 5);
 const float phi_array[6] = {in_val, in_val + sc_val, in_val + 2 * sc_val, in_val + 3 * sc_val, in_val + 4 * sc_val, in_val + 5 * sc_val};
