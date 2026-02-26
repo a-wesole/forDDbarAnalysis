@@ -30,7 +30,8 @@ const float nbins = 100.0;
 TH2D *S1S2Template, *B1B2Template, *SW1SW2Template, *S1B2Template, *B1S2Template, *SW1B2Template, *B1SW2Template, *S1SW2Template, *SW1S2Template;
 const float in_val = -0.5 * TMath::Pi(), sc_val = (2 * TMath::Pi() / 5);
 const float phi_array[5] = {in_val + sc_val, in_val + 2 * sc_val, in_val + 3 * sc_val, in_val + 4 * sc_val};
-const float fit_range_low = 1.86484-0.125, fit_range_high = 1.86484 + 0.125;
+// const float fit_range_low = 1.86484-0.125, fit_range_high = 1.86484 + 0.125;
+const float fit_range_low = 1.75, fit_range_high = 1.86484 + 0.125;
 // const float fit_range_low = 1.55, fit_range_high = 2.2;
 
 const int number_of_slices = 30;
@@ -220,17 +221,16 @@ void CreateTemplates_wSlices_5bins_M2Slices()
 
     // TString outfile = "test_templates_data.root";
     // TString outfile = "templates_out_for_6_3_30slices.root";
-    TString outfile = "templates_out_for_6_3_30slices_includingSharedDtrk.root";
+    TString outfile = "templates_out_for_6_3_30slices_includingSharedDtrk_range175.root";
     TFile *results = new TFile(outfile, "recreate");
     cout << "output_name = " << outfile << endl;
 
     // TString slices_fits_file_path = "/home/awesole/forDDbarAnalysis/forTemplatesMethod/test/TF1_outputs/20slices/pT_6_pT_3_20Slices_wGetHistogram_with175.root";
     // TString slices_fits_file_path = "fited_M1M2_with5bins_pT6_3_30slices.root";
-    TString slices_fits_file_path = "fited_M1M2_with5bins_pT6_3_30slices_updated24Feb_forSharedDtrTrks.root";
+    TString slices_fits_file_path = "fited_M1M2_with5bins_pT6_3_30slices_updated24Feb_forSharedDtrTrks_175range.root";
 
     LoadFitsFromFile(slices_fits_file_path);
 
-    float slice_width = (fit_range_high - fit_range_low) / number_of_slices;
 
     for (int dphi = 0; dphi < 5; dphi++)
     // for (int dphi = 0; dphi < 1; dphi++)

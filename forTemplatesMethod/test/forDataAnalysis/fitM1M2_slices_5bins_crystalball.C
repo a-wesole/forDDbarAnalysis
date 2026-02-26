@@ -19,8 +19,8 @@
 
 double histo_entries = 1.0e+05;
 // const float fit_range_low = 1.74, fit_range_high = 1.99, D0_mass = 1.8648;
-// const float fit_range_low = 1.75, fit_range_high = 1.86484 + 0.125, D0_mass = 1.8648;
-const float fit_range_low = 1.73, fit_range_high = 1.99, D0_mass = 1.8648;
+// const float fit_range_low = 1.86484-0.125, fit_range_high = 1.86484 + 0.125, D0_mass = 1.8648;
+const float fit_range_low = 1.75, fit_range_high = 1.86484 + 0.125, D0_mass = 1.8648;
 const int number_of_slices = 30;
 
 using namespace std;
@@ -380,7 +380,7 @@ void fitM1M2_slices_5bins_crystalball()
   TCanvas *M2_canvas = new TCanvas("M2_canvas", "M2_canvas", 1000, 1000);
 
   // TString outfile = TString("fited_M1M2_with5bins_updatedRidge.root");
-  TString outfile = TString("fited_M1M2_with5bins_pT6_3_30slices_updated24Feb_forSharedDtrTrks.root");
+  TString outfile = TString("fited_M1M2_with5bins_pT6_3_30slices_updated24Feb_forSharedDtrTrks_175range.root");
   // TString outfile = TString("oo.root");
   TFile *results = new TFile(outfile, "recreate");
 
@@ -585,9 +585,9 @@ void fitM1M2_slices_5bins_crystalball()
       F2->FixParameter(2, F2_total->GetParameter(2));
       F2->FixParameter(3, F2_total->GetParameter(3));
       F2->FixParameter(4, F2_total->GetParameter(4));
-      if (i != 8 && i !=9 && i != 10) F2->FixParameter(5, F2_total->GetParameter(5));
-      if (i ==8 || i==9 || i==10 ) F2->SetParLimits(5, 1.1*F2_total->GetParameter(5),1);
-      // if (i !=9) F2->FixParameter(5, F2_total->GetParameter(5));
+      // if (i != 8 && i !=9 && i != 10) F2->FixParameter(5, F2_total->GetParameter(5));
+      // if (i ==8 || i==9 || i==10 ) F2->SetParLimits(5, 1.1*F2_total->GetParameter(5),1);
+      F2->FixParameter(5, F2_total->GetParameter(5));
       F2->FixParameter(6, F2_total->GetParameter(6));
       F2->FixParameter(7, F2_total->GetParameter(7));
 
