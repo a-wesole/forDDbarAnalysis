@@ -21,7 +21,7 @@ const float fit_range_low = 1.86484 - 0.125, fit_range_high = 1.86484 + 0.125;
 const float in_val = -0.5 * TMath::Pi(), sc_val = (2 * TMath::Pi() / 5);
 const float phi_array[6] = {in_val, in_val + sc_val, in_val + 2 * sc_val, in_val + 3 * sc_val, in_val + 4 * sc_val, in_val + 5 * sc_val};
 
-const float ptMin = 6.0;
+const float ptMin = 3.0;
 const float ptMin_2 = 3.0;
 const int centMin = 0, centMax = 90;
 const float yMin = 0.0, yMax = 1.0;
@@ -53,7 +53,11 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
     int ifile = 0;
     int istart = atoi(i_start);
     int iend = atoi(i_end);
-    string output_name = "/scratch/negishi/awesole/DDbar_Jan2026/ROOT/M1M2_file_" + to_string(istart) + "_" + to_string(iend) + ".root";
+    // string output_name = "/scratch/negishi/awesole/DDbar_July_2026_pT_2_1/ROOT/M1M2_file_" + to_string(istart) + "_" + to_string(iend) + ".root";
+    string output_name = "/scratch/negishi/awesole/DDbar_July_2026_pT_" 
+                   + to_string(static_cast<int>(ptMin)) + "_" 
+                   + to_string(static_cast<int>(ptMin_2)) 
+                   + "/ROOT/M1M2_skippingSharedTracks_" + to_string(istart) + "_" + to_string(iend) + ".root";
     if(isTestRun) output_name = "oo.root";
     TFile *results = new TFile(output_name.c_str(), "recreate");
     cout << "output_name = " << output_name << endl;
@@ -78,7 +82,7 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
     std::vector<std::vector<TH2F *>> M2DbarDbar_bins_slices(6);
 
     // prepare tuples
-    TNtuple *M1M2Tuple = new TNtuple("M1M2Tuple", "M1M2Tuple", "m1:m2:phi1:phi2:pt1:pt2:eta1:eta2:DDbar:DD:DbarDbar");
+    TNtuple *M1M2Tuple = new TNtuple("M1M2Tuple", "M1M2Tuple", "m1:m2:m1_slice:phi1:phi2:dphi:dphi_bin:pt1:pt2:eta1:eta2:DDbar:DD:DbarDbar");
 
     int bin = 0;
     const int max_size = 50000;
@@ -290,14 +294,14 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                                     continue; // skip for candidiate and its own swap
                                 }
 
-                                // if (!((abs(Dtrk1Pt[leading] - Dtrk1Pt[subleading]) < 1.0e-5) ||
-                                //     (abs(Dtrk1Pt[leading] - Dtrk2Pt[subleading]) < 1.0e-5) ||
-                                //     (abs(Dtrk2Pt[leading] - Dtrk1Pt[subleading]) < 1.0e-5) ||
-                                //     (abs(Dtrk2Pt[leading] - Dtrk2Pt[subleading]) < 1.0e-5)))
-                                // {
-                                //     // cout << "skipping!!" << endl;
-                                //     continue; // skip 2 candidiates that have a common daughter track.
-                                // }
+                                if (((abs(Dtrk1Pt[leading] - Dtrk1Pt[subleading]) < 1.0e-5) ||
+                                    (abs(Dtrk1Pt[leading] - Dtrk2Pt[subleading]) < 1.0e-5) ||
+                                    (abs(Dtrk2Pt[leading] - Dtrk1Pt[subleading]) < 1.0e-5) ||
+                                    (abs(Dtrk2Pt[leading] - Dtrk2Pt[subleading]) < 1.0e-5)))
+                                {
+                                    // cout << "skipping!!" << endl;
+                                    continue; // skip 2 candidiates that have a common daughter track.
+                                }
 
                                 // if (abs(phi[leading] - phi[subleading] < 0.05)){
                                 //     cout << "input file is = " << filename.c_str() << " and entry is " << i << endl;
@@ -321,7 +325,6 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                                 if (delta_phi >= phi_array[4] && delta_phi <= phi_array[5])
                                     bin = 5;
 
-                                // cout << "~~~~~~~ bin = " << bin << " ~~~~~~~" << endl;
 
                                 int sliceX = std::min(int(number_of_slices), int((mass[leading] - fit_range_low) / slice_width));
                                 int sliceY = std::min(int(number_of_slices), int((mass[subleading] - fit_range_low) / slice_width));
@@ -358,17 +361,17 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                                 if ((fisD0candidate && gisDbarcandidate) || (gisD0candidate && fisDbarcandidate))
                                 {
                                     M1M2_DDbar->Fill(mass[leading], mass[subleading]);
-                                    M1M2Tuple->Fill(mass[leading], mass[subleading], phi[leading], phi[subleading], pT[leading], pT[subleading], eta[leading], eta[subleading], 1, 0, 0);
+                                    M1M2Tuple->Fill(mass[leading], mass[subleading], sliceY, phi[leading], phi[subleading], delta_phi, bin, pT[leading], pT[subleading], eta[leading], eta[subleading], 1, 0, 0);
                                 }
                                 else if (fisD0candidate && gisD0candidate)
                                 {
                                     M1M2_DD->Fill(mass[leading], mass[subleading]);
-                                    M1M2Tuple->Fill(mass[leading], mass[subleading], phi[leading], phi[subleading], pT[leading], pT[subleading], eta[leading], eta[subleading], 0, 1, 0);
+                                    M1M2Tuple->Fill(mass[leading], mass[subleading], sliceY, phi[leading], phi[subleading], delta_phi, bin, pT[leading], pT[subleading], eta[leading], eta[subleading], 0, 1, 0);
                                 }
                                 else if (fisDbarcandidate && gisDbarcandidate)
                                 {
                                     M1M2_DbarDbar->Fill(mass[leading], mass[subleading]);
-                                    M1M2Tuple->Fill(mass[leading], mass[subleading], phi[leading], phi[subleading], pT[leading], pT[subleading], eta[leading], eta[subleading], 0, 0, 1);
+                                    M1M2Tuple->Fill(mass[leading], mass[subleading],sliceY,  phi[leading], phi[subleading], delta_phi, bin, pT[leading], pT[subleading], eta[leading], eta[subleading], 0, 0, 1);
                                 }
                             } // if one of the candidates has pT > max
                         } // if mass g
