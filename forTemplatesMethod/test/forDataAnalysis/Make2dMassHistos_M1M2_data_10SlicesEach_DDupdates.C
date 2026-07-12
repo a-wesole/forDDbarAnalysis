@@ -12,14 +12,18 @@
 #include "phiTools.h"
 
 const bool isTestRun = false;
-const int number_of_slices = 30;
+const int number_of_slices = 50;
 
-const float nbinsX = 100;
-const float nbinsY = 30;
+const int number_of_phi_bins = 10;
+
+const float nbinsX = 50;
+const float nbinsY = 50;
+
+
 const float fit_range_low = 1.86484 - 0.125, fit_range_high = 1.86484 + 0.125;
 // const float fit_range_low = 1.74, fit_range_high = 1.99;
-const float in_val = -0.5 * TMath::Pi(), sc_val = (2 * TMath::Pi() / 5);
-const float phi_array[6] = {in_val, in_val + sc_val, in_val + 2 * sc_val, in_val + 3 * sc_val, in_val + 4 * sc_val, in_val + 5 * sc_val};
+const float in_val = -0.5 * TMath::Pi(), sc_val = (2 * TMath::Pi() / number_of_phi_bins);
+const float max_val = 2 * TMath::Pi() + in_val;
 
 const float ptMin = 3.0;
 const float ptMin_2 = 3.0;
@@ -69,17 +73,9 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
 
 
     std::vector<TH2F *> M1M2_bins; // 6 bins
-    std::vector<std::vector<TH2F *>> M1_bins_slices(6); // 6 bins
-    std::vector<std::vector<TH2F *>> M2_bins_slices(6);
     std::vector<TH2F *> M1M2DDbar_bins; // 6 bins
-    std::vector<std::vector<TH2F *>> M1DDbar_bins_slices(6); // 6 bins
-    std::vector<std::vector<TH2F *>> M2DDbar_bins_slices(6);
     std::vector<TH2F *> M1M2DD_bins; // 6 bins
-    std::vector<std::vector<TH2F *>> M1DD_bins_slices(6); // 6 bins
-    std::vector<std::vector<TH2F *>> M2DD_bins_slices(6);
     std::vector<TH2F *> M1M2DbarDbar_bins; // 6 bins
-    std::vector<std::vector<TH2F *>> M1DbarDbar_bins_slices(6); // 6 bins
-    std::vector<std::vector<TH2F *>> M2DbarDbar_bins_slices(6);
 
     // prepare tuples
     TNtuple *M1M2Tuple = new TNtuple("M1M2Tuple", "M1M2Tuple", "m1:m2:m1_slice:phi1:phi2:dphi:dphi_bin:pt1:pt2:eta1:eta2:DDbar:DD:DbarDbar");
@@ -96,50 +92,34 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
 
     float slice_width = (fit_range_high - fit_range_low) / number_of_slices;
 
-    auto createSlice = [&](const std::string &name) -> TH2F * // creates a TH2F with the same binning as M1M2, for each slice this will be filled later
-    {
-        TH2F *slice = new TH2F(name.c_str(), name.c_str(),
-                               nbinsX,
-                               fit_range_low,
-                               fit_range_high,
-                               nbinsY,
-                               fit_range_low,
-                               fit_range_high);
-        slice->SetOption("surf1");
-        return slice;
-    };
 
     TH2F *M1M2 = new TH2F("M1M2", "M1M2", nbinsX, fit_range_low, fit_range_high, nbinsY, fit_range_low, fit_range_high);
     M1M2->SetXTitle("M1 Mass");
     M1M2->SetYTitle("M2 Mass");
-    M1M2->SetOption("SURF1");
+    M1M2->SetOption("lego2");
+    M1M2->SetMinimum(0);
 
-    for (int i = 0; i < number_of_slices; ++i)
-    { // calls the abovve function and creates the histograms for the slices
-        std::string m1_name = "M1_slice" + std::to_string(i);
-        std::string m2_name = "M2_slice" + std::to_string(i);
-
-        M1_slices.push_back(createSlice(m1_name));
-        M2_slices.push_back(createSlice(m2_name));
-    }
 
     TH2F *M1M2_DDbar = new TH2F("M1M2_DDBar", "M1M2_DDBar", nbinsX, fit_range_low, fit_range_high, nbinsY, fit_range_low, fit_range_high);
     M1M2_DDbar->SetXTitle("M1 Mass");
     M1M2_DDbar->SetYTitle("M2 Mass");
-    M1M2_DDbar->SetOption("SURF1");
+    M1M2_DDbar->SetOption("lego2");
+    M1M2_DDbar->SetMinimum(0);
 
     TH2F *M1M2_DD = new TH2F("M1M2_DD", "M1M2_DD", nbinsX, fit_range_low, fit_range_high, nbinsY, fit_range_low, fit_range_high);
     M1M2_DD->SetXTitle("M1 Mass");
     M1M2_DD->SetYTitle("M2 Mass");
-    M1M2_DD->SetOption("SURF1");
+    M1M2_DD->SetOption("lego2");
+    M1M2_DD->SetMinimum(0);
 
     TH2F *M1M2_DbarDbar = new TH2F("M1M2_DbarDbar", "M1M2_DbarDbar", nbinsX, fit_range_low, fit_range_high, nbinsY, fit_range_low, fit_range_high);
     M1M2_DbarDbar->SetXTitle("M1 Mass");
     M1M2_DbarDbar->SetYTitle("M2 Mass");
-    M1M2_DbarDbar->SetOption("SURF1");
+    M1M2_DbarDbar->SetOption("lego2");
+    M1M2_DbarDbar->SetMinimum(0);
 
     std::vector<TH2F *> M1M2Mass;
-    for (int i = 1; i < 7; i++)
+    for (int i = 1; i < number_of_phi_bins + 2; i++)
     {
         TString name1 = TString::Format("M1M2Mass_bin%d", i);
         TH2F *M1M2_bin = new TH2F(name1, name1, nbinsX, fit_range_low, fit_range_high, nbinsY, fit_range_low, fit_range_high);
@@ -169,15 +149,6 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
         M1M2DD_bin->SetOption("lego2");
         M1M2DD_bins.push_back(M1M2DD_bin);
 
-
-        for (int j = 0; j < number_of_slices; ++j)
-        { // calls the abovve function and creates the histograms for the slices
-            std::string m1_name = "M1_bin" + std::to_string(i) + "_slice" + std::to_string(j);
-            std::string m2_name = "M2_bin" + std::to_string(i) + "_slice" + std::to_string(j);
-
-            M1_bins_slices[i-1].push_back(createSlice(m1_name));
-            M2_bins_slices[i-1].push_back(createSlice(m2_name));
-        }
     }
 
     // fill the slices
@@ -254,7 +225,7 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                     continue; // background cuts
 
                 // if ((mass[f] > 1.74 && mass[f] < 1.825) || (mass[f] > 1.91 && mass[f] < 1.99))
-                if (mass[f] > fit_range_low && mass[f] < fit_range_high)
+                if (mass[f] >= fit_range_low && mass[f] <= fit_range_high)
                 {
                     for (int g = f + 1; g < Dsize; g++)
                     {
@@ -281,7 +252,7 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                         // if ((fisD0candidate && gisD0candidate) || (fisDbarcandidate && gisDbarcandidate)) continue;
 
                         // if ((mass[g] > 1.74 && mass[g] < 1.825) || (mass[g] > 1.91 && mass[g] < 1.99))
-                        if (mass[g] > fit_range_low && mass[g] < fit_range_high)
+                        if (mass[g] >= fit_range_low && mass[g] <= fit_range_high)
                         {
                             if (std::max(pT[f], pT[g]) >= ptMin && std::min(pT[f], pT[g]) >= ptMin_2)
                             {
@@ -301,41 +272,21 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                                 {
                                     // cout << "skipping!!" << endl;
                                     continue; // skip 2 candidiates that have a common daughter track.
+                                    //July 2026 we need to remove this candidates as they make a large spike at dphi ~=0 
                                 }
 
-                                // if (abs(phi[leading] - phi[subleading] < 0.05)){
-                                //     cout << "input file is = " << filename.c_str() << " and entry is " << i << endl;
-                                //     cout << "mass 1 = " << mass[leading] << " mass 2 = " << mass[subleading] << endl;
-                                //     cout << "fisD0candidate = " << fisD0candidate << " fisDbarcandidate = " << fisDbarcandidate << endl;
-                                //     cout << "gisD0candidate = " << gisD0candidate << " gisDbarcandidate = " << gisDbarcandidate << endl;
-                                // }
                                 delta_phi = phi[leading] - phi[subleading];
                                 transition_phi(delta_phi);
 
-                                if (bin != 0)
-                                    cout << "Error!!!!!!!  phi = " << delta_phi << " and bin =" << bin << endl;
-                                if (delta_phi >= phi_array[0] && delta_phi < phi_array[1])
-                                    bin = 1;
-                                if (delta_phi >= phi_array[1] && delta_phi < phi_array[2])
-                                    bin = 2;
-                                if (delta_phi >= phi_array[2] && delta_phi < phi_array[3])
-                                    bin = 3;
-                                if (delta_phi >= phi_array[3] && delta_phi < phi_array[4])
-                                    bin = 4;
-                                if (delta_phi >= phi_array[4] && delta_phi <= phi_array[5])
-                                    bin = 5;
+                                if (delta_phi == max_val) { bin = number_of_phi_bins;}
+                                else {bin = static_cast<int>((delta_phi - in_val) / sc_val) + 1;}
 
 
                                 int sliceX = std::min(int(number_of_slices), int((mass[leading] - fit_range_low) / slice_width));
                                 int sliceY = std::min(int(number_of_slices), int((mass[subleading] - fit_range_low) / slice_width));
-                                // cout << "slice X = " << sliceX << " sliceY = " << sliceY << endl;
 
                                 ///first fill the overall M1M2 (w/o regard to dphi bin)
                                 M1M2->Fill(mass[leading], mass[subleading]);
-                                M1_slices[sliceY]->Fill(mass[leading], mass[subleading]); // Fill the corresponding slice with m1,m2
-                                M2_slices[sliceX]->Fill(mass[leading], mass[subleading]); // Fill the corresponding slice with m1,m2
-
-                                // cout << "filled overall " << endl;
 
                                 //now fill the M1M2 wrt to apprpriate dphi bin
                                 M1M2_bins[bin-1]->Fill(mass[leading], mass[subleading]);
@@ -352,8 +303,6 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
                                     M1M2DbarDbar_bins[bin-1]->Fill(mass[leading], mass[subleading]);
                                 }
                                 // cout << "filled m1m2 bin" << endl;
-                                M1_bins_slices[bin-1][sliceY]->Fill(mass[leading], mass[subleading]); // Fill the corresponding slice with m1,m2
-                                M2_bins_slices[bin-1][sliceX]->Fill(mass[leading], mass[subleading]);
 
                                 // cout << "filled for bins" << endl;
 
@@ -383,18 +332,12 @@ void Make2dMassHistos_M1M2_data_10SlicesEach_DDupdates(TString i_start = "", TSt
     } // while
 
     results->cd();
-    for (auto slice : M1_slices){slice->Write();}
-    for (auto slice : M2_slices){slice->Write();}
+    // for (auto slice : M1_slices){slice->Write();}
+    // for (auto slice : M2_slices){slice->Write();}
     for (auto bin : M1M2_bins){ bin->Write();}
     for (auto bin : M1M2DDbar_bins){ bin->Write();}
     for (auto bin : M1M2DD_bins){ bin->Write();}
     for (auto bin : M1M2DbarDbar_bins){ bin->Write();}
-
-    for (const auto &binVec : M1_bins_slices)
-    {for (TH2F *hist : binVec){hist->Write();}}
-
-    for (const auto &binVec : M2_bins_slices)
-    {for (TH2F *hist : binVec){hist->Write();}}
 
 
     M1M2->Write();
